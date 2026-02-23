@@ -1,0 +1,17 @@
+Bhanu Thammali
+Senior Software Engineer
+bhanu@example.com
+
+Experience
+Google
+Software Engineer
+2020-2023
+- Developed backend services using Node.js and React
+- Improved performance by 30%
+
+Education
+B.S. in Computer Science
+University
+
+Skills
+JavaScript, React, Node.js, Python, SQL
