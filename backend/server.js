@@ -10,6 +10,7 @@ const uploadRoutes = require('./routes/upload');
 const analyzeRoutes = require('./routes/analyze');
 const rewriteRoutes = require('./routes/rewrite');
 const generateRoutes = require('./routes/generate');
+const builderRoutes = require('./routes/builder');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -48,11 +49,12 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/analyze', analyzeRoutes);
 app.use('/api/rewrite', rewriteRoutes);
 app.use('/api/generate', generateRoutes);
+app.use('/api/builder', builderRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     timestamp: new Date().toISOString(),
     version: '1.0.0',
     openai: !!process.env.OPENAI_API_KEY
@@ -67,7 +69,7 @@ app.use((req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
   console.error('Server Error:', err);
-  res.status(err.status || 500).json({ 
+  res.status(err.status || 500).json({
     error: err.message || 'Internal server error',
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Classic Resume</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            color: #000;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 26pt;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .contact-info {
+            text-align: center;
+            font-size: 11pt;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 15px;
+        }
+
+        .contact-info span {
+            margin: 0 10px;
+        }
+
+        h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .summary {
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .item-subtitle {
+            display: flex;
+            justify-content: space-between;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+
+        ul {
+            margin-top: 5px;
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 4px;
+            text-align: justify;
+        }
+
+        .skills span {
+            margin-right: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>{{fullName}}</h1>
+        <div class="contact-info">
+            {{#if email}}<span>{{email}}</span>{{/if}}
+            {{#if phone}}<span>|</span><span>{{phone}}</span>{{/if}}
+            {{#if location}}<span>|</span><span>{{location}}</span>{{/if}}
+        </div>
+
+        {{#if summary}}
+        <h2>Professional Summary</h2>
+        <div class="summary">
+            <p>{{summary}}</p>
+        </div>
+        {{/if}}
+
+        {{#if experience.length}}
+        <h2>Experience</h2>
+        {{#each experience}}
+        <div class="experience-item">
+            <div class="item-header">
+                <span>{{company}}</span>
+                <span>{{location}}</span>
+            </div>
+            <div class="item-subtitle">
+                <span>{{role}}</span>
+                <span>{{startDate}} - {{endDate}}</span>
+            </div>
+            <ul>
+                {{#each bullets}}
+                <li>{{this}}</li>
+                {{/each}}
+            </ul>
+        </div>
+        {{/each}}
+        {{/if}}
+
+        {{#if education.length}}
+        <h2>Education</h2>
+        {{#each education}}
+        <div class="education-item">
+            <div class="item-header">
+                <span>{{school}}</span>
+                <span>{{graduationDate}}</span>
+            </div>
+            <div class="item-subtitle">
+                <span>{{degree}} in {{field}}</span>
+            </div>
+        </div>
+        {{/each}}
+        {{/if}}
+
+        {{#if skills.length}}
+        <h2>Skills</h2>
+        <div class="skills">
+            {{#each skills}}
+            <span>• {{this}}</span>
+            {{/each}}
+        </div>
+        {{/if}}
+    </div>
+</body>
+
+</html>

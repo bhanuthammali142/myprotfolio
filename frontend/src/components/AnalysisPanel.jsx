@@ -4,7 +4,8 @@ import KeywordsTab from './tabs/KeywordsTab';
 import OptimizeTab from './tabs/OptimizeTab';
 import CoverLetterTab from './tabs/CoverLetterTab';
 import InterviewTab from './tabs/InterviewTab';
-import { BarChart2, Tag, Sparkles, FileText, Mic, ArrowLeft } from 'lucide-react';
+import { BarChart2, Tag, Sparkles, FileText, Mic, ArrowLeft, PenTool } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const TABS = [
     { id: 'score', label: 'ATS Score', icon: BarChart2 },
@@ -16,22 +17,32 @@ const TABS = [
 
 export default function AnalysisPanel() {
     const { activeTab, setActiveTab, setCurrentStep, currentStep } = useResume();
+    const navigate = useNavigate();
 
     return (
         <div className="fade-in-up" style={{ marginTop: 32 }}>
-            {/* Back button */}
-            <button
-                onClick={() => setCurrentStep(1)}
-                style={{
-                    display: 'flex', alignItems: 'center', gap: 6,
-                    background: 'none', border: 'none', cursor: 'pointer',
-                    color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500,
-                    marginBottom: 20,
-                }}
-            >
-                <ArrowLeft size={15} />
-                Back to Edit
-            </button>
+            {/* Top Banner Actions */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                <button
+                    onClick={() => setCurrentStep(1)}
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        background: 'none', border: 'none', cursor: 'pointer',
+                        color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500,
+                    }}
+                >
+                    <ArrowLeft size={15} />
+                    Back to Edit
+                </button>
+
+                <button
+                    onClick={() => navigate('/build-resume')}
+                    className="btn-primary"
+                    style={{ padding: '8px 20px', borderRadius: 8, fontSize: 13, display: 'flex', alignItems: 'center', gap: 6, background: 'linear-gradient(135deg, #10b981, #06b6d4)' }}
+                >
+                    <PenTool size={15} /> Build Optimized ATS Resume
+                </button>
+            </div>
 
             {/* Tab navigation */}
             <div style={{

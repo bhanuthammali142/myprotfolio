@@ -64,10 +64,21 @@ export const resumeAPI = {
         return api.post('/generate/interview-questions', { resumeText, jobDescription, jobTitle });
     },
 
-    // Health check
     healthCheck: async () => {
         return api.get('/health');
     },
+};
+
+export const builderAPI = {
+    getTemplates: async () => {
+        return api.get('/builder/templates');
+    },
+    generateOptimizedResume: async (resumeData, jobDescription, templateId) => {
+        return api.post('/builder/generate-optimized-resume', { resumeData, jobDescription, templateId });
+    },
+    renderPDF: async (templateId, optimizedData) => {
+        return axios.post('/api/builder/render-pdf', { templateId, optimizedData }, { responseType: 'blob' });
+    }
 };
 
 export default api;

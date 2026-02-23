@@ -322,10 +322,67 @@ Job Description: ${jobDescription.substring(0, 1000)}`;
     return parsed.questions || [];
 }
 
+/**
+ * Optimize full JSON resume data for the builder
+ */
+async function optimizeResumeData(resumeData, jobDescription, improveSummary = true) {
+    const client = getOpenAIClient();
+
+    if (!client) {
+        // Simple demo mode optimization
+        const data = JSON.parse(JSON.stringify(resumeData));
+        if (improveSummary && (!data.summary || data.summary.trim() === '')) {
+            data.summary = 'Results-driven professional with proven expertise aligned with the target role. Adept at solving complex problems and delivering measurable impact.';
+        }
+        if (data.experience) {
+            data.experience = data.experience.map(exp => ({
+                ...exp,
+                bullets: exp.bullets.map((b, i) => i === 0 ? `🚀 Optimized: ${b}` : b)
+            }));
+        }
+        return data;
+    }
+
+    const commandStr = improveSummary
+        ? "1. Rewrite each bullet point. Make it ATS-optimized using the JD keywords. Use 'Accomplished [X] as measured by [Y], by doing [Z]' formatting where appropriate.\\n2. Write or rewrite a 3-4 sentence professional summary focusing on the JD keywords.\\n3. Reorder the skills array, placing skills found in the JD at the top."
+        : "1. Rewrite each bullet point. Make it ATS-optimized using the JD keywords. Use 'Accomplished [X] as measured by [Y], by doing [Z]' formatting where appropriate.\\n2. Reorder the skills array, placing skills found in the JD at the top.\\n3. Do NOT modify the summary text. Return the summary exactly as provided.";
+
+    const prompt = `You are an expert ATS resume optimizer. Respond with a single JSON object conforming strictly to the original resume data structure.
+Do not add arbitrary fields. Your task is to modify the values in the JSON according to these instructions:
+
+Tasks:
+${commandStr}
+
+Rules:
+- Keep the identical JSON schema as provided.
+- DO NOT invent or fabricate facts, previous companies, or non-existent metrics. Keep factual accuracy strictly intact.
+- Format all response strictly as a JSON object (no markdown formatting code blocks, just raw JSON).
+
+Job Description:
+${jobDescription.substring(0, 1500)}
+
+Original Resume Data (JSON):
+${JSON.stringify(resumeData)}
+
+Return ONLY the optimized JSON data object:`;
+
+    const response = await client.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.3,
+        max_tokens: 2500,
+        response_format: { type: 'json_object' },
+    });
+
+    const parsed = JSON.parse(response.choices[0].message.content);
+    return parsed;
+}
+
 module.exports = {
     rewriteBulletPoint,
     rewriteProfessionalSummary,
     rewriteFullResume,
     generateCoverLetter,
     generateInterviewQuestions,
+    optimizeResumeData,
 };
