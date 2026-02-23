@@ -114,16 +114,21 @@ Return ONLY valid JSON (no markdown, no code blocks):
   "improvement_rationale": "brief explanation of changes"
 }`;
 
-    const response = await client.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.4,
-        max_tokens: 500,
-        response_format: { type: 'json_object' },
-    });
+    try {
+        const response = await client.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.4,
+            max_tokens: 500,
+            response_format: { type: 'json_object' },
+        });
 
-    const content = response.choices[0].message.content;
-    return JSON.parse(content);
+        const content = response.choices[0].message.content;
+        return JSON.parse(content);
+    } catch (error) {
+        console.error("OpenAI API Error in rewriteBulletPoint:", error.message);
+        return generateDemoResponse('bullet', { bulletText, keywords });
+    }
 }
 
 /**
@@ -161,14 +166,19 @@ ${jobDescription.substring(0, 1500)}
 
 Return as plain text only (no JSON, no markdown, no quotes).`;
 
-    const response = await client.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.5,
-        max_tokens: 300,
-    });
+    try {
+        const response = await client.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.5,
+            max_tokens: 300,
+        });
 
-    return response.choices[0].message.content.trim();
+        return response.choices[0].message.content.trim();
+    } catch (error) {
+        console.error("OpenAI API Error in rewriteProfessionalSummary:", error.message);
+        return generateDemoResponse('summary', {});
+    }
 }
 
 /**
@@ -214,15 +224,20 @@ Return ONLY valid JSON:
   "overallAdvice": "2-3 sentence general advice"
 }`;
 
-    const response = await client.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.4,
-        max_tokens: 1500,
-        response_format: { type: 'json_object' },
-    });
+    try {
+        const response = await client.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.4,
+            max_tokens: 1500,
+            response_format: { type: 'json_object' },
+        });
 
-    return JSON.parse(response.choices[0].message.content);
+        return JSON.parse(response.choices[0].message.content);
+    } catch (error) {
+        console.error("OpenAI API Error in rewriteFullResume:", error.message);
+        return generateDemoResponse('fullResume', { resumeText });
+    }
 }
 
 /**
@@ -262,14 +277,19 @@ ${jobDescription.substring(0, 1000)}
 
 Return as formatted plain text with proper paragraph breaks.`;
 
-    const response = await client.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.6,
-        max_tokens: 600,
-    });
+    try {
+        const response = await client.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.6,
+            max_tokens: 600,
+        });
 
-    return response.choices[0].message.content.trim();
+        return response.choices[0].message.content.trim();
+    } catch (error) {
+        console.error("OpenAI API Error in generateCoverLetter:", error.message);
+        return generateDemoResponse('coverLetter', { companyName, applicantName });
+    }
 }
 
 /**
@@ -310,16 +330,21 @@ Job Title: ${jobTitle}
 Resume: ${resumeText.substring(0, 1500)}
 Job Description: ${jobDescription.substring(0, 1000)}`;
 
-    const response = await client.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.5,
-        max_tokens: 1200,
-        response_format: { type: 'json_object' },
-    });
+    try {
+        const response = await client.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.5,
+            max_tokens: 1200,
+            response_format: { type: 'json_object' },
+        });
 
-    const parsed = JSON.parse(response.choices[0].message.content);
-    return parsed.questions || [];
+        const parsed = JSON.parse(response.choices[0].message.content);
+        return parsed.questions || [];
+    } catch (error) {
+        console.error("OpenAI API Error in generateInterviewQuestions:", error.message);
+        return generateDemoResponse('interviewQuestions', {});
+    }
 }
 
 /**
@@ -366,16 +391,31 @@ ${JSON.stringify(resumeData)}
 
 Return ONLY the optimized JSON data object:`;
 
-    const response = await client.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.3,
-        max_tokens: 2500,
-        response_format: { type: 'json_object' },
-    });
+    try {
+        const response = await client.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.3,
+            max_tokens: 2500,
+            response_format: { type: 'json_object' },
+        });
 
-    const parsed = JSON.parse(response.choices[0].message.content);
-    return parsed;
+        const parsed = JSON.parse(response.choices[0].message.content);
+        return parsed;
+    } catch (error) {
+        console.error("OpenAI API Error in optimizeResumeData:", error.message);
+        const data = JSON.parse(JSON.stringify(resumeData));
+        if (improveSummary && (!data.summary || data.summary.trim() === '')) {
+            data.summary = 'Results-driven professional with proven expertise aligned with the target role. Adept at solving complex problems and delivering measurable impact.';
+        }
+        if (data.experience) {
+            data.experience = data.experience.map(exp => ({
+                ...exp,
+                bullets: exp.bullets.map((b, i) => i === 0 ? `🚀 Optimized: ${b}` : b)
+            }));
+        }
+        return data;
+    }
 }
 
 module.exports = {
